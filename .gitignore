@@ -1,0 +1,9 @@
+node_modules/
+*.tgz
+*.zip
+.env
+.env.*
+provenance.json
+*.tmp
+.sandbox/
+coverage/
