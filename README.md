@@ -7,13 +7,15 @@
 
 ## English
 
-Version **0.1.2** provides opt-in Gateway hooks and middleware for Codex MultiAgent V2 routes through [Magpie](https://github.com/yetone/magpie). It converts readable `agent_message` items for upstreams that need ordinary messages. A local provenance ledger can restore strings mislabeled as `encrypted_content` when their exact hashes match previously observed plaintext tool arguments.
+Version **0.1.3** provides opt-in Gateway hooks and middleware for Codex MultiAgent V2 routes through [Magpie](https://github.com/yetone/magpie). It converts readable `agent_message` items for upstreams that need ordinary messages. A local provenance ledger can restore strings mislabeled as `encrypted_content` when their exact hashes match previously observed plaintext tool arguments.
 
 ### Choose a route before enabling
 
 The default is `targets: []`: no conversion, restoration, or ledger I/O occurs until a valid target is configured. Configure routes where you have reproduced a compatibility problem. Provider prefixes below are examples, not a list of tested providers.
 
-Magpie's reply-side marker fix in [#3183 landed in v0.1.2747](https://github.com/yetone/magpie/issues/3183#issuecomment-6585099439). The separate third-party plain-message relay issue [#4108](https://github.com/yetone/magpie/issues/4108) was still open when checked on 2026-11-06. The general third-party Responses plaintext relay layer uses the inspected Magpie `0.1.2964` source as its reference. It applies to builds/routes without the #4108 conversion; no first official fixed release has been verified. Remove routes from `targets` when they already perform native conversion. An open issue does not establish that every latest build lacks the fix, or that every current route needs restoration. In inspected Codex `0.166.0-alpha.6` source, `direct_source` requires the `collaboration` namespace as well as the empty marker; `agents` calls do not take that plaintext branch.
+Magpie's reply-side marker fix in [#3183 landed in v0.1.2747](https://github.com/yetone/magpie/issues/3183#issuecomment-6585099439). The separate third-party plain-message relay issue [#4108](https://github.com/yetone/magpie/issues/4108) was still open when checked on 2026-11-06. The general third-party Responses plaintext relay layer uses the inspected Magpie `0.1.2964` source as its reference. It applies to builds/routes without the #4108 conversion; no first official fixed release has been verified. Remove routes from `targets` when they already perform native conversion.
+
+Restoration addresses a Codex `rust-v0.166.0-alpha.6` bug: `direct_source` hard-codes the default `collaboration` namespace instead of reading `features.multi_agent_v2.tool_namespace`. The mislabeling occurs when that setting uses a non-default namespace, such as `agents`, even with the empty marker. This plugin records evidence only from `agents` and `collaboration` calls. On Codex's default `collaboration` configuration, tasks already arrive as plaintext and only the middleware conversion applies.
 
 ### Install and configure
 
@@ -77,6 +79,8 @@ Unknown or sealed content, empty messages, and mixed supported/unsupported conte
 
 The ledger retains at most 2048 records for 30 days by default, using `verifiedAt`; older formats remain readable. Hashes expose equality, and someone who can read the file can test short or guessable messages against them. Keep the file local. Invalid ledgers and unavailable storage are reported through `ctx.report`; a damaged file is preserved as `.corrupt.<UUID>` before replacement.
 
+In the reviewed host implementation, the request's report closure is inactive after the request finishes, so failures while saving reply evidence in `onResponse` may not be displayed.
+
 ```sh
 magpie plugin list
 magpie plugin off magpie-agent-message-compat
@@ -100,19 +104,21 @@ Run offline module checks with Node.js 20 or later:
 npm test
 ```
 
-The current suite has 13 offline check groups. Tests use temporary directories and do not call models or read personal ledgers. They cover conversion, pass-through, provenance, retention, storage failures, and ordering. Real-route acceptance must inspect actual dispatch, follow-up, and return messages rather than infer success from HTTP 200 or a model assertion.
+The current suite has 15 offline check groups. Tests use temporary directories and do not call models or read personal ledgers. They cover conversion, pass-through, provenance, namespace and item-level seal guards, retention, storage failures, and ordering. Real-route acceptance must inspect actual dispatch, follow-up, and return messages rather than infer success from HTTP 200 or a model assertion.
 
 The plugin makes no model or network calls. Headers and representation changes can affect token counts and cache prefixes; cache effects have not been measured. Transport failures, rate limits, and authentication need separate diagnosis. When the native route supports these messages, disable the plugin and verify that route directly.
 
 ## 中文
 
-**0.1.2** 为通过 Magpie 使用的 Codex MultiAgent V2 路由提供可选的 Gateway Hook 和 Middleware：将可读的 `agent_message` 转成普通消息；对误放进 `encrypted_content` 的字符串，只有原文哈希与已观察到的明文工具参数完全匹配时，才恢复正文。
+**0.1.3** 为通过 Magpie 使用的 Codex MultiAgent V2 路由提供可选的 Gateway Hook 和 Middleware：将可读的 `agent_message` 转成普通消息；对误放进 `encrypted_content` 的字符串，只有原文哈希与已观察到的明文工具参数完全匹配时，才恢复正文。
 
 ### 按路由启用
 
 默认 `targets: []`，配置有效目标前不转换消息、不恢复正文，也不读写台账。请为已复现兼容问题的路由启用。上面的 `my-provider/*` 是配置示例，不代表供应商验收结果。
 
-[#3183 的响应标记修复已随 v0.1.2747 发布](https://github.com/yetone/magpie/issues/3183#issuecomment-6585099439)；独立的明文消息中继问题 [#4108](https://github.com/yetone/magpie/issues/4108) 在 2026-11-06 核对时仍为 open。通用第三方 Responses 明文中继兼容层以检查过的 Magpie `0.1.2964` 源码为参考，适用于未包含 #4108 转换的构建或路由；目前尚未核实首个正式修复版本。已包含原生转换的路由应从 `targets` 移除。问题仍为 open 不代表所有最新构建都缺少修复，也不表示所有当前路由都需要恢复明文。已检查的 Codex `0.166.0-alpha.6` 源码中，`direct_source` 除空标记外还要求 `collaboration` 命名空间；`agents` 调用不会进入同一明文分支。
+[#3183 的响应标记修复已随 v0.1.2747 发布](https://github.com/yetone/magpie/issues/3183#issuecomment-6585099439)；独立的明文消息中继问题 [#4108](https://github.com/yetone/magpie/issues/4108) 在 2026-11-06 核对时仍为 open。通用第三方 Responses 明文中继兼容层以检查过的 Magpie `0.1.2964` 源码为参考，适用于未包含 #4108 转换的构建或路由；目前尚未核实首个正式修复版本。已包含原生转换的路由应从 `targets` 移除。
+
+恢复步骤针对 Codex `rust-v0.166.0-alpha.6` 的一个问题：`direct_source` 写死了默认命名空间 `collaboration`，没有读取 `features.multi_agent_v2.tool_namespace`。该配置使用 `agents` 等非默认命名空间时，即使带有空标记，明文仍会被误标为密文。本插件只记录 `agents` 和 `collaboration` 调用的来源证据。Codex 使用默认 `collaboration` 配置时，任务已按明文传递，只有 Middleware 转换步骤适用。
 
 ### 安装与配置
 
@@ -139,6 +145,8 @@ Middleware 将仅含有效 `input_text`、`input_image`，且至少含图片或�
 
 台账默认最多保留 2048 项、30 天，兼容旧格式。持有文件的人可以判断哈希是否相同，也可以猜测短文本并计算哈希比对，因此应保存在本机。台账损坏或存储不可用时通过 `ctx.report` 报告；替换损坏台账前会保留 `.corrupt.<UUID>` 副本。
 
+已审查的宿主实现会在请求结束后停用该请求的报告闭包，因此 `onResponse` 保存响应证据时发生的失败可能不会显示。
+
 使用上方的 `plugin off/on/rm` 命令关闭、启用或移除，标识以 `plugin list` 为准。关闭和移除均保留台账文件，不再需要时可单独删除。
 
 ### 证据与验证
@@ -149,7 +157,7 @@ Middleware 将仅含有效 `input_text`、`input_image`，且至少含图片或�
 
 [启动日志摘录](evidence/magpie-startup-2026-11-05-redacted.txt) 记录了 11 月 5 日 Magpie `0.1.2964` 的启动，相邻还有 `0.1.2663` 启动记录。它佐证 #3183 发布之后的本机运行时间线，但不能锁定每个请求对应的服务进程。这些均为 11 月 5 日历史记录，11 月 6 日只是提取日期，不是 11 月 6 日的新复现或 HTTP 抓包。记录中的 `agents` 命名空间即使带空标记，也不满足已检查 Codex 源码的 `collaboration` 明文分支。
 
-使用 Node.js 20 或更高版本运行 `npm test`。当前共 13 组离线检查，使用临时目录，不调用模型、不读取个人台账，覆盖转换、原样放行、来源记录、保留策略、存储异常与消息顺序。真实路由验收需核对实际派发、追加任务和结果回传，不能仅凭 HTTP 200 或模型自述判断成功。
+使用 Node.js 20 或更高版本运行 `npm test`。当前共 15 组离线检查，使用临时目录，不调用模型、不读取个人台账，覆盖转换、原样放行、来源记录、命名空间与条目级密文守卫、保留策略、存储异常与消息顺序。真实路由验收需核对实际派发、追加任务和结果回传，不能仅凭 HTTP 200 或模型自述判断成功。
 
 插件不额外调用模型或网络。来源头与消息表示变化可能影响 token 数和缓存前缀，尚无缓存效果测量；网络错误、限流和认证问题需另行诊断。原生路由支持后，可关闭插件并直接验证该路由。
 
