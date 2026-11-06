@@ -1,0 +1,83 @@
+{
+  "capture_type": "Redacted excerpts from real Codex rollout JSONL, not an HTTP capture",
+  "captured_codex_cli_version": "0.166.0-alpha.6",
+  "capture_local_date": "2026-11-06 (UTC+08:00)",
+  "extracted_date": "2026-11-06 (UTC+08:00)",
+  "fresh_reproduction": true,
+  "original_exact_plaintext_equality_verified_before_redaction": true,
+  "context": "Existing authorized implementation subagent spawned on November 6; inspected afterward without launching a probe. The rollout wrapped its task plaintext in encrypted_content. This is not an HTTP capture and does not establish task delivery failure.",
+  "records": [
+    {
+      "timestamp": "2026-11-06T08:52:14.713Z",
+      "ordinal": 3468,
+      "type": "response_item",
+      "payload": {
+        "type": "function_call",
+        "status": "completed",
+        "id": "[REDACTED_CALL_ITEM_ID]",
+        "name": "spawn_agent",
+        "namespace": "agents",
+        "arguments": "{\"task_name\":\"redacted_child\",\"agent_type\":\"worker\",\"model\":\"cpa/gpt-6-astra\",\"reasoning_effort\":\"low\",\"fork_turns\":\"none\",\"message\":\"[REDACTED_IDENTICAL_PLAINTEXT_MESSAGE]\"}",
+        "encrypted_function_args": [],
+        "call_id": "[REDACTED_CALL_ID]",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "[REDACTED_PARENT_TURN_ID]",
+          "create_time": 1793955129.7121737
+        }
+      },
+      "metadata": {
+        "client_authored": false,
+        "user_input_order": 325
+      }
+    },
+    {
+      "timestamp": "2026-11-06T08:52:15.848Z",
+      "ordinal": 12,
+      "type": "response_item",
+      "payload": {
+        "type": "agent_message",
+        "id": "[REDACTED_MESSAGE_ID]",
+        "author": "/root",
+        "recipient": "/root/redacted_child",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Message Type: NEW_TASK\nTask name: /root/redacted_child\nSender: /root\nPayload:\n"
+          },
+          {
+            "type": "encrypted_content",
+            "encrypted_content": "[REDACTED_IDENTICAL_PLAINTEXT_MESSAGE]"
+          }
+        ],
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "[REDACTED_CHILD_TURN_ID]",
+          "create_time": 1793955135.8487208,
+          "content_item_metadata": [
+            {
+              "provenance": {
+                "type": "tool",
+                "namespace": "agents"
+              }
+            },
+            {
+              "provenance": {
+                "type": "tool",
+                "namespace": "agents"
+              }
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "client_authored": false,
+        "user_input_order": 0
+      }
+    }
+  ],
+  "redactions": [
+    "Original task message replaced by the identical literal marker in arguments.message and encrypted_content.",
+    "Child task name and call/message/turn identifiers replaced; parent routing retained.",
+    "Timestamps, field structure, namespace, empty encrypted_function_args marker, model argument and provenance retained.",
+    "Session metadata omitted except verified CLI version. Exact runtime Magpie version is not attested by these records."
+  ]
+}

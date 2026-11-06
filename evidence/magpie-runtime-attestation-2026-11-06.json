@@ -1,0 +1,35 @@
+{
+  "capture_type": "Read-only local runtime observations reported by the coordinating agent; not an HTTP capture",
+  "observation_local_time": "2026-11-06T17:11:42+08:00",
+  "observations": [
+    {
+      "command": "magpie --version",
+      "output": "magpie 0.1.2964"
+    },
+    {
+      "command": "Get-NetTCPConnection -LocalPort 3425 -State Listen",
+      "local_port": 3425,
+      "state": "Listen",
+      "owning_process": "[REDACTED_PID_C]"
+    },
+    {
+      "command": "Get-Process -Id <listener PID>",
+      "process_id": "[REDACTED_PID_C]",
+      "executable": "[REDACTED_INSTALL_DIRECTORY]/magpie.exe",
+      "start_time": "2026-11-05T00:12:06.6582014+08:00"
+    },
+    {
+      "source": "Contemporaneous application startup log; same entry as magpie-startup-2026-11-05-redacted.txt",
+      "local_timestamp": "2026/11/05 00:12:07",
+      "version": "0.1.2964",
+      "process_id": "[REDACTED_PID_C]",
+      "platform": "windows/amd64"
+    }
+  ],
+  "supported_conclusion": "At the 17:11 observation, the gateway listener belonged to the process whose start time and PID match the contemporaneous Magpie 0.1.2964 startup record; the current version command also reported 0.1.2964.",
+  "limits": "This is a listener/process observation at 17:11, not a per-request capture or proof of which process handled the 16:52 subagent HTTP request. It does not expose request bodies or wire transformations.",
+  "redactions": [
+    "The same process uses [REDACTED_PID_C] here and in the startup excerpt.",
+    "The personal absolute executable path was replaced; commands are shown in generic form."
+  ]
+}

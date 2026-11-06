@@ -1,0 +1,8 @@
+Capture type: redacted excerpts from the local Magpie application log, not an HTTP capture.
+These are contemporaneous startup records; they do not correlate a PID to the model request in the rollout pairs.
+
+2026/11/05 00:06:38 magpie 0.1.2964 started (app, pid [REDACTED_PID_A], windows/amd64); this log: [REDACTED_LOCAL_LOG_PATH]
+2026/11/05 00:12:06 magpie 0.1.2663 started (app, pid [REDACTED_PID_B], windows/amd64); this log: [REDACTED_LOCAL_LOG_PATH]
+2026/11/05 00:12:07 magpie 0.1.2964 started (app, pid [REDACTED_PID_C], windows/amd64); this log: [REDACTED_LOCAL_LOG_PATH]
+
+Redactions: process IDs and absolute log paths replaced. Original local timestamps, versions, startup wording and platform retained. Extracted November 6, 2026.

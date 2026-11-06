@@ -1,0 +1,82 @@
+{
+  "capture_type": "Redacted excerpts from real Codex rollout JSONL, not an HTTP capture",
+  "captured_codex_cli_version": "0.166.0-alpha.6",
+  "capture_local_date": "2026-11-05 (UTC+08:00)",
+  "extracted_date": "2026-11-06 (UTC+08:00)",
+  "fresh_reproduction": false,
+  "original_exact_plaintext_equality_verified_before_redaction": true,
+  "records": [
+    {
+      "timestamp": "2026-11-04T17:05:41.215Z",
+      "ordinal": 22,
+      "type": "response_item",
+      "payload": {
+        "type": "function_call",
+        "status": "completed",
+        "id": "[REDACTED_CALL_ITEM_ID]",
+        "name": "send_message",
+        "namespace": "agents",
+        "arguments": "{\"target\":\"/root\",\"message\":\"[REDACTED_IDENTICAL_PLAINTEXT_MESSAGE]\"}",
+        "encrypted_function_args": [],
+        "call_id": "[REDACTED_CALL_ID]",
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "[REDACTED_CHILD_TURN_ID]",
+          "create_time": 1793811941.4130743
+        }
+      },
+      "metadata": {
+        "client_authored": false,
+        "user_input_order": 2
+      }
+    },
+    {
+      "timestamp": "2026-11-04T17:05:46.140Z",
+      "ordinal": 310,
+      "type": "response_item",
+      "payload": {
+        "type": "agent_message",
+        "id": "[REDACTED_MESSAGE_ID]",
+        "author": "/root/redacted_child",
+        "recipient": "/root",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Message Type: MESSAGE\nTask name: /root\nSender: /root/redacted_child\nPayload:\n"
+          },
+          {
+            "type": "encrypted_content",
+            "encrypted_content": "[REDACTED_IDENTICAL_PLAINTEXT_MESSAGE]"
+          }
+        ],
+        "internal_chat_message_metadata_passthrough": {
+          "turn_id": "[REDACTED_PARENT_TURN_ID]",
+          "create_time": 1793811946.140333,
+          "content_item_metadata": [
+            {
+              "provenance": {
+                "type": "tool",
+                "namespace": "agents"
+              }
+            },
+            {
+              "provenance": {
+                "type": "tool",
+                "namespace": "agents"
+              }
+            }
+          ]
+        }
+      },
+      "metadata": {
+        "client_authored": false,
+        "user_input_order": 69
+      }
+    }
+  ],
+  "redactions": [
+    "The original message was replaced with the identical literal marker in arguments.message and encrypted_content.",
+    "Child task name and message/call/turn identifiers were replaced; /root routing was retained.",
+    "Timestamps, types, field names, namespace, empty encrypted_function_args array, content block types, status, metadata structure and provenance namespaces were retained.",
+    "Session metadata is omitted except the verified CLI version; no HTTP request/response bodies or headers were captured here."
+  ]
+}
